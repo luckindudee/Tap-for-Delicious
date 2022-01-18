@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width= device-width, initial-scale=1">
+    <title>Order Confirmation</title>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/libraries/jquery.mobile.structure-1.4.5.min.css" />
+    <script src="../../scripts/libraries/http_ajax.googleapis.com_ajax_libs_jquery_3.4.1_jquery.js"></script>
+    <script src="../../scripts/libraries/http_maxcdn.bootstrapcdn.com_bootstrap_3.4.0_js_bootstrap.js"></script>
+    <script src="../../scripts/libraries/http_code.jquery.com_jquery-1.11.3.js"></script>
+    <script src="../../scripts/libraries/jquery.mobile-1.4.5.min.js"></script>
+	<script src="https://checkout.stripe.com/checkout.js"></script>
+
+
+    <style>
+        .title {
+            font-family: 'Roboto', sans-serif;
+            color: white;
+            background-color: black;
+            text-align: center;
+            text-shadow: none;
+        }
+
+        img,
+        .item.active {
+            max-height: 170px;
+        }
+
+        .ui-btn.ui-btn-icon-right.ui-icon-carat-r {
+            background-color: black;
+            border: solid white 1px;
+        }
+
+        .imgcusinebg {
+            background-image: url("../../assets/cuisinebackground.jpg");
+            background-size: cover;
+            border: white;
+            border-style: solid;
+            width: 100%;
+            height: 140px;
+        }
+
+        .imgrestaurantbg {
+            background-image: url("../../assets/restaurantbackground.jpg");
+            background-size: cover;
+            width: 100%;
+            border: white;
+            border-style: solid;
+            height: 140px;
+        }
+
+        .contents {
+            color: white;
+            background-color: rgba(32, 7, 7, 0.342);
+            padding-top: 12%;
+            padding-bottom: 20%;
+            text-shadow: none;
+        }
+
+        .logo-header {
+            height: 100px;
+            width: 100px;
+            margin-left: 41%;
+            margin-top: 1%;
+        }
+
+        .ui-header {
+            background-color: #F5911E;
+            font-size: 22px;
+            height: 140px;
+            color: white;
+        }
+
+        .ui-link.ui-btn-left.ui-btn.ui-icon-arrow-l.ui-btn-icon-left.ui-shadow.ui-corner-all {
+            border: none;
+            font-size: 28px;
+            background-color: #F5911E;
+        }
+
+        @media screen and (height:736px) and (orientation: portrait) {
+            .imgcusinebg {
+                height: 160px;
+            }
+
+            .imgrestaurantbg {
+                height: 160px;
+            }
+
+            img,
+            .item.active {
+                max-height: 200px;
+            }
+
+        }
+
+        @media screen and (min-width:768px) and (max-width:768px) and (orientation:portrait) {
+            .logo-header {
+                margin-left: 47%;
+                height: 52px;
+            }
+
+            .ui-input-text {
+                padding: 6px;
+                font-size: 22px;
+            }
+
+            .ui-header {
+                height: 65px;
+            }
+
+            img,
+            .item.active {
+                max-height: 350px;
+            }
+
+            .imgcusinebg {
+                width: 100%;
+                height: 220px;
+            }
+
+            .imgrestaurantbg {
+                width: 100%;
+                height: 220px;
+            }
+
+            .contents {
+                padding-bottom: 10%;
+            }
+
+        }
+
+        /* Navigation Tab Menu Styles */
+
+        @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+            .ui-icon-home:after {
+                background-image: url("../../assets/home.png");
+                background-size: 18px 18px;
+            }
+        }
+
+        @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+            .ui-icon-search:after {
+                background-image: url("../../assets/search.png");
+                background-size: 18px 18px;
+            }
+        }
+
+        @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+            .ui-icon-pastorders:after {
+                background-image: url("../../assets/past orders.png");
+                background-size: 18px 18px;
+            }
+        }
+
+        @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+            .ui-icon-menu:after {
+                background-image: url("../../assets/menu icon.png");
+                background-size: 18px 18px;
+            }
+        }
+
+        /* Menu Styles */
+
+        .ui-panel.ui-panel-open {
+            position: fixed;
+        }
+
+        .ui-panel-inner {
+            position: absolute;
+            top: 1px;
+            left: 0;
+            right: 0;
+            bottom: 0px;
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .title-search {
+            margin-left: 37%;
+        }
+
+        .ui-input-search {
+            margin-left: 3%;
+            font-size: 17px;
+            margin-right: 3%;
+            padding: 2px;
+        }
+
+
+        .ui-content {
+            border-width: 1px;
+            overflow: visible;
+            overflow-x: hidden;
+            padding: 0.5em;
+            background-color: #EAEDED;
+        }
+
+        @media all and (max-width: 35em) {
+
+            .my-breakpoint .ui-block-a,
+            .my-breakpoint .ui-block-b,
+            .my-breakpoint .ui-block-c,
+            .my-breakpoint .ui-block-d,
+            .my-breakpoint .ui-block-e {
+                width: 100%;
+                float: none;
+            }
+        }
+
+        .ui-block-a {
+            margin-top: 10px !important;
+        }
+
+        .ui-block-b {
+            margin-top: 10px !important;
+        }
+
+        .ui-bar,
+        .ui-body {
+            position: relative !important;
+            padding: .4em .4em !important;
+            overflow: hidden !important;
+            display: block !important;
+            clear: both !important;
+        }
+
+
+        @media screen and (min-width: 768px) and (max-width: 768px) and (orientation: portrait) {
+            .my-breakpoint.ui-grid-b .ui-block-a {
+                width: 49%;
+            }
+
+            .my-breakpoint.ui-grid-b .ui-block-b,
+            .my-breakpoint.ui-grid-b .ui-block-c {
+                width: 51%;
+            }
+
+            .ui-block-a {
+                margin-top: 10px !important;
+            }
+
+            .ui-block-b {
+                margin-top: 10px !important;
+                margin-left: 10px !important;
+                width: 48% !important;
+            }
+
+            .ui-bar,
+            .ui-body {
+                position: relative !important;
+                padding: .4em .4em !important;
+                overflow: hidden !important;
+                display: block !important;
+                clear: both !important;
+            }
+        }
+
+        .column {
+            float: center;
+            padding: 10px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            height: 15px;
+        }
+
+        .left {
+            width: 30%;
+        }
+
+        .right {
+            width: 10%;
+        }
+
+        .middle {
+            width: 9%;
+        }
+
+        /* Clear floats after the columns */
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .responsive {
+            width: 100%;
+            height: 180px;
+            border-radius: 05%;
+        }
+
+
+        /* Navigation Tab Menu Styles */
+
+        @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+            .ui-icon-home:after {
+                background-image: url("../../assets/home.png");
+                background-size: 18px 18px;
+            }
+        }
+
+        @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+            .ui-icon-search:after {
+                background-image: url("../../assets/search.png");
+                background-size: 18px 18px;
+            }
+        }
+
+        @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+            .ui-icon-pastorders:after {
+                background-image: url("../../assets/past orders.png");
+                background-size: 18px 18px;
+            }
+        }
+
+        @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+            .ui-icon-menu:after {
+                background-image: url("../../assets/menu icon.png");
+                background-size: 18px 18px;
+            }
+        }
+
+        /* Footer */
+        .site-footer {
+            background-color: #26272b;
+            padding: 50px 0 20px;
+            font-size: 15px;
+            line-height: 24px;
+            color: #737373;
+        }
+
+        .site-footer hr {
+            border-top-color: #bbb;
+            opacity: 0.5
+        }
+
+        .site-footer hr.small {
+            margin: 20px 0
+        }
+
+        .site-footer h6 {
+            color: #fff;
+            font-size: 16px;
+            text-transform: uppercase;
+            margin-top: 5px;
+            letter-spacing: 2px
+        }
+
+        .site-footer a {
+            color: #737373;
+        }
+
+        .site-footer a:hover {
+            color: #F5911E;
+            text-decoration: none;
+        }
+
+        .footer-links {
+            padding-left: 0;
+            list-style: none
+        }
+
+        .footer-links li {
+            display: block
+        }
+
+        .site-footer .social-icons {
+            text-align: right
+        }
+
+        .site-footer .social-icons a {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            margin-left: 6px;
+            margin-right: 0;
+            border-radius: 100%;
+            background-color: #33353d
+        }
+
+        .copyright-text {
+            margin: 0
+        }
+
+        @media (max-width:991px) {
+            .site-footer [class^=col-] {
+                margin-bottom: 30px
+            }
+        }
+
+        @media (max-width:767px) {
+            .site-footer {
+                padding-bottom: 0
+            }
+
+            .site-footer .copyright-text,
+            .site-footer .social-icons {
+                text-align: center
+            }
+        }
+
+        .social-icons {
+            padding-left: 0;
+            margin-bottom: 0;
+            list-style: none
+        }
+
+        .social-icons li {
+            display: inline-block;
+            margin-bottom: 4px
+        }
+
+        .social-icons li.title {
+            margin-right: 15px;
+            text-transform: uppercase;
+            color: #96a2b2;
+            font-weight: 700;
+            font-size: 13px
+        }
+
+        .social-icons a {
+            background-color: #eceeef;
+            color: #818a91;
+            font-size: 16px;
+            display: inline-block;
+            line-height: 44px;
+            width: 44px;
+            height: 44px;
+            text-align: center;
+            margin-right: 8px;
+            border-radius: 100%;
+            -webkit-transition: all .2s linear;
+            -o-transition: all .2s linear;
+            transition: all .2s linear
+        }
+
+        .social-icons a:active,
+        .social-icons a:focus,
+        .social-icons a:hover {
+            color: #fff;
+            background-color: #F5911E;
+        }
+
+        .social-icons.size-sm a {
+            line-height: 34px;
+            height: 34px;
+            width: 34px;
+            font-size: 14px
+        }
+
+        .social-icons a.facebook:hover {
+            background-color: #F5911E;
+        }
+
+        .social-icons a.twitter:hover {
+            background-color: #F5911E;
+        }
+
+        .social-icons a.linkedin:hover {
+            background-color: #F5911E;
+        }
+
+        .social-icons a.dribbble:hover {
+            background-color: #F5911E;
+        }
+
+        @media (max-width:767px) {
+            .social-icons li.title {
+                display: block;
+                margin-right: 0;
+                font-weight: 600
+            }
+        }
+
+        a {
+        text-decoration: none;
+        display: inline-block;
+        padding: 8px 16px;
+        }
+
+        a:hover {
+        background-color: #ddd;
+        color: black;
+        }
+
+        .previous {
+        background-color: #f1f1f1;
+        color: black;
+        }
+
+        .back {
+                margin-left: 5%;
+                height: 52px;
+            }
+
+
+        .paragraph-about {
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            font-size: 22px;
+        }
+
+        .ui-btn.ui-input-btn.ui-corner-all.ui-shadow {
+            font-family: 'PT Sans', sans-serif;
+            background-color: #31CC70;
+            color: white;
+            text-shadow: none;
+            font-size: 22px;
+            border-radius: 15px;
+            margin-top: 50px;
+            margin-left: 1em;
+            margin-right: 1em;
+        }
+
+        .confirm {
+            width: 100px;
+            height: 100px;
+        }
+
+        @media screen and (orientation:landscape) {
+            .content {
+                margin-top: 0;
+            }
+            .paragraph-about {
+                text-align: center;
+            }
+            .ui-btn.ui-input-btn.ui-corner-all.ui-shadow {
+                margin-top: 10px;
+            }
+
+        }
+
+        @media screen and (min-width:768px) and (max-width:768px) and (orientation:portrait) {
+            .content {
+                margin-top: 250px;
+            }
+            .paragraph-about {
+                text-align: center;
+                margin-left: 1em;
+                margin-right: 1em;
+            }
+            .ui-btn.ui-input-btn.ui-corner-all.ui-shadow {
+                margin-top: 150px;
+            }
+            .confirm {
+                width: 80px;
+                height: 80px;
+            }
+            .ui-btn.ui-input-btn.ui-corner-all.ui-shadow {
+                font-family: 'PT Sans', sans-serif;
+                background-color: #31CC70;
+                color: white;
+                text-shadow: none;
+                font-size: 22px;
+                border-radius: 15px;
+                margin-top: 50px;
+                margin-left: 3em;
+                margin-right: 3em;
+            }
+
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <!-- This is page 1-->
+    <div data-role="page" id="item1">
+
+        <div data-role="header" data-position="fixed" data-theme="a">
+            <!-- header-->
+                <div>
+                    <img class="logo-header" src="../../assets/logo.png">
+                </div>
+        </div>
+
+        <div class="ui-content" align="center">
+
+            <div role="main" class="ui-content">
+            
+                <div class="content">
+                    <p class="paragraph-about">
+                        TAP FOR DELICIOUS
+                    </p>
+                    <p class="paragraph-about">
+                        Thank you for order! 
+                    </p>
+                    <center>
+                        <img class="confirm" src="../../assets/confirmicon.png"/>
+                    </center>
+                    <p class="paragraph-about">
+                        On my way to your table...
+                    </p>
+                    <div data-rol="fieldcontain">
+                        <a href="C:\Users\acer\Downloads\Mobile App\Group34A_iPhone&iPad\EatsUp\main\views\burgers.html"><input type="submit" id="done" value="DONE"></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Site footer -->
+        <footer class="site-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <h6>Terms & Conditions</h6>
+                        <p class="text-justify"><i>TAP FOR DELICIOUS</i> shall grant user a personal, limited,
+                            non-exclusive, and non-transferrable license to access and use the Services only as
+                            expressly permitted as per the terms and conditions of the agreement. We take cares to keep
+                            all the prices listed are correct at the time of publication, and have been placed as
+                            received from the restaurants.</p>
+                    </div>
+
+                    <div class="col-xs-6 col-md-3">
+                        <h6>Contact us</h6>
+                        <p><i class="fa fa-phone fa-lg" aria-hidden="true"></i> +94 76 19000 78</p>
+                        <p><a href="#"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i>tapfordelicious@hotmail.com</a></p>
+                    </div>
+                </div>
+                <hr>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-sm-6 col-xs-12">
+                        <p class="copyright-text">Copyright &copy; 2022 All Rights Reserved by
+                            <a href="#">Tap for delicious</a>.
+                        </p>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <ul class="social-icons">
+                            <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+                            <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li><a class="dribbble" href="#"><i class="fa fa-dribbble"></i></a></li>
+                            <li><a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div> <!-- end of page 1-->
+
+
+</body>
+
+</html>
